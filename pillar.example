@@ -1,0 +1,32 @@
+btsync_instances:
+  - daemon:
+      DAEMON_UID: btsync
+      DAEMON_GID: btsync
+    config:
+      device_name: "My Sync Device"
+      listening_port: 0
+      storage_path: /home/user/.sync
+      check_for_updates: false
+      use_upnp: true
+      download_limit: 0
+      upload_limit: 0
+      webui:
+        listen: 0.0.0.0:8888
+        login: admin
+        password: password
+  - daemon:
+      DAEMON_UID: root
+      DAEMON_GID: root
+    config:
+      device_name: "My Other Sync Device"
+      listening_port: 4649
+      shared_folders:
+        - secret: "MY_SECRET_1"
+          dir: "/home/user/bittorrent/sync_test"
+          use_relay_server: true
+          use_tracker: true
+          use_dht: false
+          search_lan: true
+          use_sync_trash: true
+          known_hosts:
+            - 192.168.1.2:44444
