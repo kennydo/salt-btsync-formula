@@ -48,7 +48,9 @@ def run():
 
 
 def __add_btsync_repo():
-    """Adds the yeasoft btsync repo"""
+    """
+    Adds the yeasoft btsync repo
+    """
     repo = __get_merged_repo_parameters()
 
     dist = __grains__['lsb_distrib_codename']
@@ -56,39 +58,32 @@ def __add_btsync_repo():
                                      dist)
 
     return {
-        'pkgrepo': [
-            'managed',
-            {
-                'name': name,
-                'dist': dist,
-                'keyserver': repo['keyserver'],
-                'keyid': repo['keyid'],
-             },
-        ],
+        'pkgrepo.managed': [{
+            'name': name,
+            'dist': dist,
+            'keyserver': repo['keyserver'],
+            'keyid': repo['keyid'],
+        }],
     }
 
 def __install_btsync_package():
-    """Installs the btsync package"""
+    """
+    Installs the btsync package
+    """
     return {
-        'pkg': [
-            'installed',
-            {
-                'name': 'btsync',
-            },
-        ],
+        'pkg.installed': [{
+            'name': 'btsync',
+        }],
     }
 
 
 def __remove_default_instance():
     """
-    Ensures that the default instance conf file (from the package) is absent
+    Ensures that the default instance conf file (from the package) is absent.
     """
     return {
-        'file': [
-            'absent',
-            {
-                'name': '/etc/btsync/debconf-default.conf',
-            },
-        ],
+        'file.absent': [{
+            'name': '/etc/btsync/debconf-default.conf',
+            }],
     }
 
