@@ -56,11 +56,11 @@ def __install_btsync_package():
         ],
     }
 
+
 def __remove_default_instance():
     """
     Ensures that the default instance conf file (from the package) is absent
     """
-    pass
     return {
         'file': [
             'absent',
@@ -69,6 +69,7 @@ def __remove_default_instance():
             },
         ],
     }
+
 
 def __create_instance(instance):
     """Creates the config file for a single instance"""
