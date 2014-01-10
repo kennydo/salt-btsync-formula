@@ -1,0 +1,7 @@
+{% set btsync = salt['grains.filter_by']({
+    'Debian': {
+        'apt_base_uri': 'http://debian.yeasoft.net/btsync',
+        'keyserver': 'keys.gnupg.net',
+        'keyid': '6BF18B15'
+    },
+}, merge=salt['pillar.get']('btsync:lookup')) %}
