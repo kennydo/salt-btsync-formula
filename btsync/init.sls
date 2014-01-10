@@ -21,7 +21,8 @@ def run():
 
     ret['yeasoft_repo'] = __add_btsync_repo()
     ret['btsync'] = __install_btsync_package()
-    ret['btsync-debconf.conf'] = __remove_default_instance()
+    ret['btsync_service'] = __enable_btsync_service()
+    ret['btsync_debconf_conf'] = __remove_default_instance()
 
     instances = __pillar__.get('btsync_instances')
     for index, instance in enumerate(instances):
@@ -32,7 +33,8 @@ def run():
         daemon_config = "\n".join(
             "//{0}={1}".format(key, value) for key, value
             in instance.get('daemon', {}).iteritems())
-        btsync_config = json.dumps(btsync)
+        btsync_config = json.dumps(btsync,
+                                   indent=4)
         contents = "{0}\n{1}".format(daemon_config, btsync_config)
 
         ret[name] = {
@@ -42,6 +44,9 @@ def run():
                 'group': daemon.get('DAEMON_GID', 'root'),
                 'mode': 400,
                 'contents': contents,
+                'watch_in': [
+                    {'service': 'btsync_service'},
+                ],
             }],
         }
     return ret
@@ -73,6 +78,18 @@ def __install_btsync_package():
     return {
         'pkg.installed': [{
             'name': 'btsync',
+        }],
+    }
+
+
+def __enable_btsync_service():
+    """
+    Ensures the btsync service is running
+    """
+    return {
+        'service.running': [{
+            'name': 'btsync',
+            'enable': True,
         }],
     }
 
