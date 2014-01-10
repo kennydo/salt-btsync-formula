@@ -1,4 +1,5 @@
 #!py
+import json
 
 
 def __get_merged_repo_parameters():
@@ -22,6 +23,27 @@ def run():
     ret['btsync'] = __install_btsync_package()
     ret['btsync-debconf.conf'] = __remove_default_instance()
 
+    instances = __pillar__.get('btsync_instances')
+    for index, instance in enumerate(instances):
+        daemon = instance.get('daemon', {})
+        btsync = instance.get('config', {})
+
+        name = "/etc/btsync/instance_{0}.conf".format(index)
+        daemon_config = "\n".join(
+            "//{0}={1}".format(key, value) for key, value
+            in instance.get('daemon', {}).iteritems())
+        btsync_config = json.dumps(btsync)
+        contents = "{0}\n{1}".format(daemon_config, btsync_config)
+
+        ret[name] = {
+            'file.managed': [{
+                'name': name,
+                'user': daemon.get('DAEMON_UID', 'root'),
+                'group': daemon.get('DAEMON_GID', 'root'),
+                'mode': 400,
+                'contents': contents,
+            }],
+        }
     return ret
 
 
@@ -70,7 +92,3 @@ def __remove_default_instance():
         ],
     }
 
-
-def __create_instance(instance):
-    """Creates the config file for a single instance"""
-    pass
