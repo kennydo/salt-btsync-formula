@@ -19,6 +19,8 @@ def run():
     ret = dict()
 
     ret['yeasoft_repo'] = __add_btsync_repo()
+    ret['btsync'] = __install_btsync_package()
+    ret['btsync-debconf.conf'] = __remove_default_instance()
 
     return ret
 
@@ -37,21 +39,36 @@ def __add_btsync_repo():
             {
                 'name': name,
                 'dist': dist,
-                 'keyserver': repo['keyserver'],
-                 'keyid': repo['keyid'],
+                'keyserver': repo['keyserver'],
+                'keyid': repo['keyid'],
              },
         ],
     }
 
 def __install_btsync_package():
     """Installs the btsync package"""
-    pass
+    return {
+        'pkg': [
+            'installed',
+            {
+                'name': 'btsync',
+            },
+        ],
+    }
 
 def __remove_default_instance():
     """
     Ensures that the default instance conf file (from the package) is absent
     """
     pass
+    return {
+        'file': [
+            'absent',
+            {
+                'name': '/etc/btsync/debconf-default.conf',
+            },
+        ],
+    }
 
 def __create_instance(instance):
     """Creates the config file for a single instance"""
