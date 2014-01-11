@@ -36,7 +36,7 @@ Each instance has 2 different things to configure: the daemon and the the btsync
 
 For each instance you define in ``pillar['btsync_instances']``, you can define a dictionary under the ``daemon`` key and specify the values for ``DAEMON_UID``, ``DAEMON_GID``, ``DAEMON_UMASK``, etc. These parameters specify how you want each btsync instance to be run. For example, you can have one instance of btsync be run as root, but have another instance be run as a different user.
 
-Next, you define a dictionary under the ``config`` key for each instance. This dictionary is the part that the btsync program cares about. The ``pillar.example`` shows sample pillar configurations you might use.
+Next, you define a dictionary under the ``config`` key for each instance. This dictionary is the part that the btsync program cares about. The ``pillar.example`` shows sample pillar configurations you might use. Consult the `BitTorrent Sync user guide`_ for more configuration options.
 
 .. important:: Disable ``check_for_updates``
 
@@ -44,3 +44,5 @@ Next, you define a dictionary under the ``config`` key for each instance. This d
     
 
 .. _YeaSoft repo: http://www.yeasoft.com/site/projects:btsync-deb:btsync-server
+
+.. _BitTorrent Sync user guide: http://btsync.s3-website-us-east-1.amazonaws.com/BitTorrentSyncUserGuide.pdf
