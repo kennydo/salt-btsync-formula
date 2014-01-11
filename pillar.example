@@ -20,6 +20,11 @@ btsync_instances:
     config:
       device_name: "My Other Sync Device"
       listening_port: 4649
+      storage_path: /home/other_user/.sync
+      check_for_updates: false
+      use_upnp: true
+      download_limit: 0
+      upload_limit: 0
       shared_folders:
         - secret: "MY_SECRET_1"
           dir: "/home/user/bittorrent/sync_test"
