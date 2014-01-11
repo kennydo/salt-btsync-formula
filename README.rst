@@ -2,6 +2,8 @@ btsync
 ======
 Installs the ``btsync`` package from the `YeaSoft repo`_ and (optionally) creates ``btsync`` instance configuration files based on pillar data.
 
+Note that since only Debian packges exist so far, this formula will only work for Debian-based systems.
+
 .. note::
 
     See the full `Salt Formulas installation and usage instructions
