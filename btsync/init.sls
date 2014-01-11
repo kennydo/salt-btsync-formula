@@ -1,106 +1,22 @@
-#!py
-import json
+{% from "btsync/map.jinja" import btsync with context %}
 
+yeasoft_repo:
+  pkgrepo.managed:
+    - name: deb {{ btsync.apt_base_uri }} {{ grains['lsb_distrib_codename'] }} main
+    - dist: {{ grains['lsb_distrib_codename'] }}
+    - keyserver: {{ btsync.keyserver }}
+    - keyid: {{ btsync.keyid }}
+    - require_in:
+      - pkg: btsync
 
-def __get_merged_repo_parameters():
-    return __salt__['grains.filter_by']({
-        'Debian': {
-            'apt_base_uri': 'http://debian.yeasoft.net/btsync',
-            'keyserver': 'keys.gnupg.net',
-            'keyid': '6BF18B15'
-        },
-    }, merge=__salt__['pillar.get']('btsync:lookup'))
+btsync:
+  pkg:
+    - installed
+  service:
+    - running
+    - enable: True
+    - require:
+      - pkg: btsync
 
-
-def run():
-    """
-    Adds the btsync repo, installs the btsync package, and creates the
-    configuration for each instance.
-    """
-    ret = dict()
-
-    ret['yeasoft_repo'] = __add_btsync_repo()
-    ret['btsync'] = __install_btsync_package()
-    ret['btsync_service'] = __enable_btsync_service()
-    ret['btsync_debconf_conf'] = __remove_default_instance()
-
-    instances = __pillar__.get('btsync_instances')
-    for index, instance in enumerate(instances):
-        daemon = instance.get('daemon', {})
-        btsync = instance.get('config', {})
-
-        name = "/etc/btsync/instance_{0}.conf".format(index)
-        daemon_config = "\n".join(
-            "//{0}={1}".format(key, value) for key, value
-            in instance.get('daemon', {}).iteritems())
-        btsync_config = json.dumps(btsync,
-                                   indent=4)
-        contents = "{0}\n{1}".format(daemon_config, btsync_config)
-
-        ret[name] = {
-            'file.managed': [{
-                'name': name,
-                'user': daemon.get('DAEMON_UID', 'root'),
-                'group': daemon.get('DAEMON_GID', 'root'),
-                'mode': 400,
-                'contents': contents,
-                'watch_in': [
-                    {'service': 'btsync_service'},
-                ],
-            }],
-        }
-    return ret
-
-
-def __add_btsync_repo():
-    """
-    Adds the yeasoft btsync repo
-    """
-    repo = __get_merged_repo_parameters()
-
-    dist = __grains__['lsb_distrib_codename']
-    name = "deb {0} {1} main".format(repo['apt_base_uri'],
-                                     dist)
-
-    return {
-        'pkgrepo.managed': [{
-            'name': name,
-            'dist': dist,
-            'keyserver': repo['keyserver'],
-            'keyid': repo['keyid'],
-        }],
-    }
-
-def __install_btsync_package():
-    """
-    Installs the btsync package
-    """
-    return {
-        'pkg.installed': [{
-            'name': 'btsync',
-        }],
-    }
-
-
-def __enable_btsync_service():
-    """
-    Ensures the btsync service is running
-    """
-    return {
-        'service.running': [{
-            'name': 'btsync',
-            'enable': True,
-        }],
-    }
-
-
-def __remove_default_instance():
-    """
-    Ensures that the default instance conf file (from the package) is absent.
-    """
-    return {
-        'file.absent': [{
-            'name': '/etc/btsync/debconf-default.conf',
-            }],
-    }
-
+/etc/btsync/debconf-default.conf:
+  file.absent
