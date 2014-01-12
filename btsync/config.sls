@@ -55,7 +55,7 @@ def run():
     requirements = [{'pkg': 'btsync'}]
     for name in instance_names:
         requirements.append({'file': name})
-    instances_directory_config['require'] = requirements
+    instances_directory_config.append({'require': requirements})
 
     ret['btsync_instances_directory'] = {
         'file.directory': instances_directory_config
