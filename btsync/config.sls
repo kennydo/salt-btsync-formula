@@ -10,7 +10,7 @@ def run():
     ret = {'include': ['btsync']}
 
     instance_names = list()
-    instances = __pillar__.get('btsync_instances')
+    instances = __pillar__.get('btsync_instances', [])
     for index, instance in enumerate(instances):
         daemon = instance.get('daemon', {})
         btsync = instance.get('config', {})
