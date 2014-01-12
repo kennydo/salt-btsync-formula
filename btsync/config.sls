@@ -41,15 +41,24 @@ def run():
             ],
         }
 
+    instances_directory_config = [
+        {'name': '/etc/btsync'},
+        {'user': 'root'},
+        {'group': 'root'},
+        {'mode': 755},
+        {'clean': True},
+        {'watch_in': [
+            {'service': 'btsync'},
+        ]},
+    ]
+
+    requirements = [{'pkg': 'btsync'}]
+    for name in instance_names:
+        requirements.append({'file': name})
+    instances_directory_config['require'] = requirements
+
     ret['btsync_instances_directory'] = {
-        'file.directory': [
-            {'name': '/etc/btsync'},
-            {'clean': True},
-            {'require': [{'file': name} for name in instance_names]},
-            {'watch_in': [
-                {'service': 'btsync'},
-            ]},
-        ],
+        'file.directory': instances_directory_config
     }
 
     return ret
